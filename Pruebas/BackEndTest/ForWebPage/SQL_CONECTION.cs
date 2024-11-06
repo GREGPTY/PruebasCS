@@ -14,11 +14,11 @@ namespace Pruebas.BackEndTest.ForWebPage
 {
     internal class SQL_CONECTION
     {
-        private string connectionString = "Data Source=DESKTOP-UM983A7\\SQLEXPRESS;Initial Catalog=Access_Control_One;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+        private string connectionString = "tu conexion";
         
         public static string ConnectionStringName()
         {
-            return "Data Source=DESKTOP-UM983A7\\SQLEXPRESS;Initial Catalog=Access_Control_One;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+            return "tu conexion";
         }
         public string SQL_CreateUser(string User = null, string Password = null, string Email = null, string autorization = null)
         {
