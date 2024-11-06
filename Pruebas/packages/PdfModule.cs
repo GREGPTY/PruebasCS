@@ -23,9 +23,9 @@ namespace Pruebas.packages
             Console.WriteLine("Hola Mundo, desde PdfModule");
             
         }
-        public string extractTextFromPdf()
+        public string extractTextFromPdf(string PdfPath)
         {
-            string PdfPath = "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\aaa.pdf";
+            //string PdfPath = "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\Files\\";
             //string PdfPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "aaa.pdf");
             Console.WriteLine("PDF Path: " + PdfPath); // Imprimimos la ruta del archivo de entrada
             StringBuilder sb = new StringBuilder();

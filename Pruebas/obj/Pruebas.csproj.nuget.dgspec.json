@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\Pruebas.csproj": {}
+    "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\Pruebas.csproj": {}
   },
   "projects": {
-    "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\Pruebas.csproj": {
+    "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\Pruebas.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\Pruebas.csproj",
+        "projectUniqueName": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\Pruebas.csproj",
         "projectName": "Pruebas",
-        "projectPath": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\Pruebas.csproj",
+        "projectPath": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\Pruebas.csproj",
         "packagesPath": "C:\\Users\\2024\\.nuget\\packages\\",
-        "outputPath": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\Pruebas\\Pruebas\\obj\\",
+        "outputPath": "D:\\Documents\\Curriculum\\Greg\\DevCodes\\C#\\PruebasCS\\Pruebas\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,6 +50,14 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "System.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.8.6, )"
+            },
             "iTextSharp": {
               "target": "Package",
               "version": "[5.5.13.4, )"
