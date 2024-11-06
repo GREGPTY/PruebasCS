@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using BCrypt.Net;
 using Microsoft.VisualBasic.FileIO;
+using Pruebas.BackEndTest.ForWebPage;
 
 namespace Pruebas.BackEndTest.OnlyTest
 {
     internal class verification
     {
-        private string connectionString = "Data Source=DESKTOP-UM983A7\\SQLEXPRESS;Initial Catalog=Access_Control_One;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+
+        readonly private string connectionString = SQL_CONECTION.ConnectionStringName();
 
         public string NoSpaceSrting(string String = null)
         {
