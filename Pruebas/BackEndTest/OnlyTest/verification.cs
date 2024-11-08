@@ -14,7 +14,6 @@ namespace Pruebas.BackEndTest.OnlyTest
     {
 
         readonly private string connectionString = SQL_CONECTION.ConnectionStringName();
-
         public string NoSpaceSrting(string String = null)
         {
             string answer = "";

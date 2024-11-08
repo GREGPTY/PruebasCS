@@ -14,6 +14,7 @@ namespace Pruebas.BackEndTest.ForWebPage
 {
     internal class SQL_CONECTION
     {
+        verification v = new verification();
         private string connectionString = "tu conexion";
         
         public static string ConnectionStringName()
@@ -492,7 +493,218 @@ namespace Pruebas.BackEndTest.ForWebPage
             }
             return answer;
         }
+        public List<string> MyUserData(string Username = null)
+        {
+            List<string> answer = new List<string>();
+            if (!string.IsNullOrEmpty(Username))
+            {
+                string querty = "select p.ID ,p.User_ControlGreg,  p.Rank_Control,p.email, s.SalarioPorHora, s.TipoDePago " +
+                    "from (personal as p inner join salario_de_usuario_por_dia as s on p.User_ControlGreg = s.User_ControlGreg) " +
+                    "where p.User_ControlGreg = @username ;";
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", Username);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows && reader.Read())
+                                {
+                                    string Data = null;
+                                    int columnSize = reader.FieldCount;
+                                    for (int i = 0; i < columnSize; i += 1)
+                                    {
+                                        Type type = reader.GetFieldType(i);
+                                        answer.Add(v.ValorDeLaTabla(reader, i).ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    answer.Add("No Data");
+                }
+            }
+            return answer;
+        }
+        public List<List<string>> DataGridView_Data(string Username = null, string querty = null, DateTime DateStart = default, DateTime DateEnd = default)
+        {
+            List<List<string>> answer = new List<List<string>>();
+            if ((!string.IsNullOrEmpty(Username)) && (!string.IsNullOrEmpty(querty)))
+            {                
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", Username);
+                            if (!(DateStart == default || DateEnd==default))
+                            {
+                                cmd.Parameters.AddWithValue("@DateStart", DateStart);
+                                cmd.Parameters.AddWithValue("@DateEnd", DateEnd);
+                            }
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows)
+                                {
+                                    List<string> titlerow = new List<string>();
+                                for (int i =0; i< reader.FieldCount;i+=1)
+                                {
+                                    titlerow.Add(reader.GetName(i));
+                                }
+                                answer.Add(titlerow);
+                                    while (reader.Read())
+                                    {
+                                        List<string> rowElement = new List<string>();
+                                        for (int i =0; i<reader.FieldCount;i+=1)
+                                        {
+                                            Type type = reader.GetFieldType(i);
+                                            rowElement.Add(v.ValorDeLaTabla(reader,i));
+                                        }
+                                        answer.Add(rowElement);
+                                    }                                   
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    answer.Add(new List<string> { "No hay datos" });
+                }
+            }
+            return answer;
+        }
+        public DateTime[] GetDateRange(string username = null, string queryDateRange = null)
+        {
+            //@"SELECT TOP 1 DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio) AS DateStart, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal) AS DateEnd FROM salario_a_la_semana WHERE User_ControlGreg_Salario = @username ORDER BY Movimiento DESC"
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(queryDateRange)) { return null; }
+            DateTime dateStart, dateEnd;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand cmd = new SqlCommand(queryDateRange, connection))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            dateStart = reader.GetDateTime(0);
+                            dateEnd = reader.GetDateTime(1);
+                            return new DateTime[] { dateStart, dateEnd };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        public List<List<string>> GetDataBetweenDays(string Username = null, string querty = null, DateTime dateStart = default, DateTime dateEnd = default)
+        {
+            List<List<string>> answer = new List<List<string>>();
+            if (!(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(querty) || dateStart == default || dateEnd == default))
+            {
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", Username);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows)
+                                {
+                                    List<string> titlerow = new List<string>();
+                                    for (int i = 0; i < reader.FieldCount; i += 1)
+                                    {
+                                        titlerow.Add(reader.GetName(i));
+                                    }
+                                    answer.Add(titlerow);
+                                    while (reader.Read())
+                                    {
+                                        List<string> rowElement = new List<string>();
+                                        for (int i = 0; i < reader.FieldCount; i += 1)
+                                        {
+                                            Type type = reader.GetFieldType(i);
+                                            rowElement.Add(v.ValorDeLaTabla(reader, i));
+                                        }
+                                        answer.Add(rowElement);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    answer.Add(new List<string> { "No hay datos" });
+                }
+            }
+            return answer;
+        }
 
 
+
+
+
+
+
+
+        //CONSULTAS
+        public string Load_DGV_Weekly_RankDates()
+        {
+            return "SELECT TOP 1 " +
+                " CONVERT(DATE, DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio)) AS DateStart, " +
+                "CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS DateEnd " +
+                "FROM salario_a_la_semana \r\nWHERE User_ControlGreg_Salario = @username " +
+                "ORDER BY Movimiento DESC;";
+        }
+
+        public string Load_DGV_Weekly_Between_Querty(int quantity = 0)
+        {
+            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto, HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
+            "CONVERT(DATE, DATEFROMPARTS(AnoInicio, MesInicio, DiaIncio)) AS \"Date Start\"," +
+            "CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS \"Date End\" " +
+            "from salario_a_la_semana where User_ControlGreg_Salario = @username and " +
+            "  AND DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal) BETWEEN @DateStart AND @DateEnd " +
+            " order by Movimiento desc";
+        }
+        public string Load_DGV_Last_Weekly_Querty(int quantity = 0)
+        {
+            return $"select top {quantity} Movimiento, User_ControlGreg_Salario as Username, Monto, HorasTrabajadas as \"Hours Worked\", MinutosTrabajados as \"Minutes Worked\", " +
+            "CONVERT(DATE, DATEFROMPARTS(AnoFinal, MesFinal, DiaFinal)) AS \"Date End\" " +
+            "from salario_a_la_semana where User_ControlGreg_Salario = @username "+
+            " order by Movimiento desc";
+        }
+        public string Load_DGV_Days_Between_Querty(int top = 0)
+        {
+            return $"SELECT TOP {top}" +
+                    $"User_ControlGreg_Salario AS \"Username\", DATEFROMPARTS(Ano, Mes, Dia) AS \"Date\", Monto, " +
+                    $"RIGHT('00' + CAST(HoraInicio AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutoInicio AS VARCHAR), 2) AS \"Check-in Time\", " +
+                    $"RIGHT('00' + CAST(HoraFinal AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutoFinal AS VARCHAR), 2) AS \"Check-out Time\", " +
+                    $"RIGHT('00' + CAST(HorasTrabajadas AS VARCHAR), 2) + ':' + RIGHT('00' + CAST(MinutosTrabajados AS VARCHAR), 2) AS \"Hours Worked\" " +
+                    $"FROM salario_al_dia " +
+                    $"WHERE User_ControlGreg_Salario = @username " +
+                    $"AND DATEFROMPARTS(Ano, Mes, Dia) BETWEEN @DateStart AND @DateEnd order by DATEFROMPARTS(Ano, Mes, Dia) asc;";
+        }
     }
-}
+    }
+
+
+
+/* string Data = null;
+                                    int columnSize = reader.FieldCount;
+                                    for (int i = 0; i < columnSize; i += 1)
+                                    {
+                                        Type type = reader.GetFieldType(i);
+                                        answer.Add(v.ValorDeLaTabla(reader, i).ToString());
+                                    }*/

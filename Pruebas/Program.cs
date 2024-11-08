@@ -194,3 +194,37 @@ int Chk5Int = 1;
 
 Console.WriteLine($"\nCambiando los datos : {sql_test.EditUser_General(txtUserNameOld, txtUserName, txtNewPassword_One, Chk5Int, Dropdown_Rank_Selected, Dropdown_Pago_Por_Hora_Selected, txtPago, txtMail)}");
 //*/
+
+string username = "greg";
+List<string> data = new List<string>(sql_test.MyUserData(username));
+Console.WriteLine();
+for (int i = 0 ;i < data.Count; i += 1) { 
+    Console.WriteLine($"Datos de [{username}], espacio [{i}]:  {data[i]}"); 
+}
+
+querty = sql_test.Load_DGV_Last_Weekly_Querty(1);
+List<List<string>> alldata = new List<List<string>>(sql_test.DataGridView_Data(username,querty));
+for (int i=0; i<alldata.Count; i+=1)
+{
+    Console.WriteLine($"Fila: [{i}]");
+    for (int j = 0; j < alldata[i].Count;j+=1)
+    {
+        Console.WriteLine($"Columna: [{j}] dato: [{alldata[i][j].ToString()}]");
+    }
+}
+Console.WriteLine();
+querty = sql_test.Load_DGV_Weekly_RankDates();
+DateTime[] dateRange = sql_test.GetDateRange(username,querty);
+Console.WriteLine($"Fecha de Inicio: [{dateRange[0].ToString("yyyy-MM-dd")}], Fecha de Final: [{dateRange[1].ToString("yyyy-MM-dd")}]");
+querty = sql_test.Load_DGV_Days_Between_Querty(7);
+alldata.Clear();
+
+alldata = new List<List<string>>(sql_test.DataGridView_Data(username, sql_test.Load_DGV_Days_Between_Querty(7), dateRange[0], dateRange[1]));
+for (int i = 0; i < alldata.Count; i += 1)
+{
+    Console.WriteLine($"Fila: [{i}]");
+    for (int j = 0; j < alldata[i].Count; j += 1)
+    {
+        Console.WriteLine($"Columna: [{j}] dato: [{alldata[i][j].ToString()}]");
+    }
+}//*/
