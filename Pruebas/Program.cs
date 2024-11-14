@@ -135,12 +135,12 @@ if (verification.ItsDoubleWithTwoDecimal(numero))
 {
     Console.WriteLine($"Numero Transformado: "+verification.TransforToMoney(numero));
 }
-string querty = "select Ranks from datos_pueden_ser_ranks;";
+/*string querty = "select Ranks from datos_pueden_ser_ranks;";
 foreach (string q in ver.DropDown(querty))
 {
     Console.WriteLine($"Dato en Rank: {q}");
 }
-
+//*/
 string usuario = ver.NoSpaceSrting(ver.Lower_Username("greg"));
 Console.WriteLine($"El Usuario '{usuario}' es parte del rango mas alto: '{sql_test.ItsHighRank(usuario)}'");
 
@@ -194,7 +194,7 @@ int Chk5Int = 1;
 
 Console.WriteLine($"\nCambiando los datos : {sql_test.EditUser_General(txtUserNameOld, txtUserName, txtNewPassword_One, Chk5Int, Dropdown_Rank_Selected, Dropdown_Pago_Por_Hora_Selected, txtPago, txtMail)}");
 //*/
-
+/*
 string username = "greg";
 List<string> data = new List<string>(sql_test.MyUserData(username));
 Console.WriteLine();
@@ -228,3 +228,43 @@ for (int i = 0; i < alldata.Count; i += 1)
         Console.WriteLine($"Columna: [{j}] dato: [{alldata[i][j].ToString()}]");
     }
 }//*/
+/*
+int userId = 1;
+string userControlGregTime = "greg";
+DateTime startDate = new DateTime(2024, 10, 20);
+DateTime endDate = DateTime.Today;
+
+for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+{
+    // Insert for entry at 9:00 AM
+    Console.WriteLine($"INSERT INTO control_de_accesos (ID_User, User_ControlGreg_Time, Dia, Mes, Ano, Hora, Minuto) " +
+                      $"VALUES ({userId}, '{userControlGregTime}', {date.Day}, {date.Month}, {date.Year}, 9, 0);");
+
+    // Insert for exit at 5:00 PM
+    Console.WriteLine($"INSERT INTO control_de_accesos (ID_User, User_ControlGreg_Time, Dia, Mes, Ano, Hora, Minuto) " +
+                      $"VALUES ({userId}, '{userControlGregTime}', {date.Day}, {date.Month}, {date.Year}, 17, 0);");
+}
+//*/
+string RankUserName = "greg";
+Console.WriteLine($"Es Super High Rang? = {sql_test.ItsSuperHighRank(RankUserName)}");
+Console.WriteLine($"Es High Rang? = {sql_test.ItsHighRank(RankUserName)}");
+Console.WriteLine($"Rank of {RankUserName}? = {sql_test.GetMyRankNumber(RankUserName)}");
+Console.WriteLine($"Rank Name of {RankUserName}? = {sql_test.Get_RankName(RankUserName)}");
+
+List<List<string>> results = sql_test.DropDownsRanks(sql_test.GetMyRankNumber(RankUserName));
+
+// Print each row in the results using a for loop
+for (int i = 0; i < results.Count; i++)
+{
+    var row = results[i];
+
+    if (row.Count == 2)
+    {
+        Console.WriteLine($"Rank Name: [{row[0]}], Rank Number: [{row[1]}]");
+    }
+    else if (row.Count == 1)
+    {
+        // Handles case where there's a single item, e.g., an error message or "No Hay Opciones Disponibles"
+        Console.WriteLine(row[0]);
+    }
+}

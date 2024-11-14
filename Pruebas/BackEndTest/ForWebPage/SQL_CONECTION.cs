@@ -15,11 +15,11 @@ namespace Pruebas.BackEndTest.ForWebPage
     internal class SQL_CONECTION
     {
         verification v = new verification();
-        private string connectionString = "tu conexion";
+        //tuconexion
         
         public static string ConnectionStringName()
         {
-            return "tu conexion";
+            //tunexion
         }
         public string SQL_CreateUser(string User = null, string Password = null, string Email = null, string autorization = null)
         {
@@ -194,10 +194,14 @@ namespace Pruebas.BackEndTest.ForWebPage
 
             return answer;
         }
+        public bool LowRank(string Username = null)
+        {
+            bool answer = false;
+            return answer;
+        }
         public bool ItsHighRank(string Username = null) //0,1
         {
             bool answer = false;
-            int salida = 0;
             if (!string.IsNullOrEmpty(Username))
             {
                 try
@@ -205,33 +209,79 @@ namespace Pruebas.BackEndTest.ForWebPage
                     using (SqlConnection cxnx = new SqlConnection(connectionString))
                     {
                         cxnx.Open();
-                        string query = "select p.User_ControlGreg, p.Rank_Control, r.RankNumber from personal as p " +
-                                       "inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks " +
+                        string query = "select p.User_ControlGreg, p.Rank_Control, r.RankNumber from personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks " +
                                        "where p.User_ControlGreg = @username";
-
                         using (SqlCommand cmd = new SqlCommand(query, cxnx))
                         {
                             cmd.Parameters.AddWithValue("@username", Username);
-
                             using (SqlDataReader reader = cmd.ExecuteReader())
                             {
                                 if (reader.Read())
                                 {
-                                    int RankNumber = Convert.ToInt32(reader.GetInt32(2));
-                                    salida = RankNumber;
+                                    string RankNumber = reader.GetString(2);
                                     //Console.WriteLine($"El Rango Obtenido fue: {RankNumber} para el usuario [{Username}]");
-                                    if (RankNumber >= 0 && RankNumber < 2)
+                                    if (RankNumber.Length >= 1 && RankNumber.Length <= 2)
                                     {
-                                            answer = true;                                    
+                                        answer = true;
                                     }
                                     else
                                     {
-                                        answer=false;
+                                        answer = false;
                                     }
                                 }
                                 else
                                 {
-                                    answer=false;
+                                    answer = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                    answer = false;
+                }
+            }
+            else
+            {
+                answer = false;
+            }
+            return answer;
+        }
+        public bool ItsSuperHighRank(string Username = null) //0,1
+        {
+            bool answer = false;
+            if (!string.IsNullOrEmpty(Username))
+            {
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        string query = "select p.User_ControlGreg, p.Rank_Control, r.RankNumber from personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks " +
+                                       "where p.User_ControlGreg = @username";
+                        using (SqlCommand cmd = new SqlCommand(query, cxnx))
+                        {
+                            cmd.Parameters.AddWithValue("@username", Username);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    string RankNumber = reader.GetString(2);
+                                    //Console.WriteLine($"El Rango Obtenido fue: {RankNumber} para el usuario [{Username}]");
+                                    if (RankNumber.Length == 1 && RankNumber == "0")
+                                    {
+                                        answer = true;
+                                    }
+                                    else
+                                    {
+                                        answer = false;
+                                    }
+                                }
+                                else
+                                {
+                                    answer = false;
                                 }
                             }
                         }
@@ -653,9 +703,108 @@ namespace Pruebas.BackEndTest.ForWebPage
         }
 
 
+        public List<List<string>> DropDownsRanks(string RankNumber = null)
+        {
+            List<List<string>> answer = new List<List<string>>();
+            if (string.IsNullOrEmpty(RankNumber)) {
+                answer.Add(new List<string> { "No Hay Opciones Disponibles" });
+                return answer;
+            }
+            else
+            {
+                try
+                {
+                    using (SqlConnection cxnx = new SqlConnection(connectionString))
+                    {
+                        cxnx.Open();
+                        string querty = "select Ranks, RankNumber from datos_pueden_ser_ranks where RankNumber like @RankNumber+'%' order by RankNumber asc";
+                        using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                        {
+                            RankNumber = RankNumber == "0" ? "" : RankNumber;
+                            cmd.Parameters.AddWithValue("@RankNumber", RankNumber);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if (reader.HasRows)
+                                {
+                                    while (reader.Read())
+                                    {
+                                        List<string> row = new List<string>();
+                                        if (reader.GetString(1).Length > RankNumber.Length)
+                                        {
+                                            //0 String Rank Name, 1 String Rank Number
+                                            row.Add(reader.GetString(0));
+                                            row.Add(reader.GetString(1));
+                                        }
+                                        answer.Add(row);
+                                    }
+                                }
+                                else
+                                {
 
-
-
+                                }
+                            }
+                        }
+                        cxnx.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    answer.Add(new List<string> { $"Error, No Se Cargaron los datos: {ex.Message}" });
+                }
+            }
+            return answer;
+        }
+        public string GetMyRankNumber(string Username = null) {
+            string answer = "";
+            if (string.IsNullOrEmpty(Username)) { return null; }
+            using (SqlConnection cxnx = new SqlConnection(connectionString))
+            {
+                cxnx.Open();
+                string querty = "select r.RankNumber from (personal as p inner join datos_pueden_ser_ranks as r on p.Rank_Control = r.Ranks) where p.User_ControlGreg = @username";
+                using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                {
+                    cmd.Parameters.AddWithValue("@username", Username);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows && reader.Read())
+                        {
+                            answer = reader.GetString(0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            return answer;
+        }
+        public string Get_RankName(string username = null)
+        {
+            string answer = null;
+            if (string.IsNullOrEmpty(username)) { return null; }
+            using (SqlConnection cxnx = new SqlConnection(connectionString))
+            {
+                cxnx.Open();
+                string querty = "select Rank_Control from personal where User_ControlGreg = @username ;";
+                using (SqlCommand cmd = new SqlCommand(querty, cxnx))
+                {
+                    cmd.Parameters.AddWithValue("@username", username);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows && reader.Read())
+                        {
+                            answer = reader.GetString(0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            return answer;
+        }
 
 
 
